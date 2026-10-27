@@ -1,10 +1,18 @@
-from fastapi import FastAPI, Response
+from random import random
+
+from fastapi import FastAPI, Response, HTTPException
 
 app = FastAPI()
 
+class UnauthHTTPException(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(401, "Not authoraised")
+
 @app.get("/")
 def root(response: Response):
-    response.status_code = 204
-    # return {"Score": 102}
-    # return Response(status_code=201)
-    return 1
+    num = random()
+    if num > 0.5:
+        raise UnauthHTTPException()
+    response.status_code = 201
+    return {"Score": num}
+
