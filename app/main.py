@@ -1,8 +1,13 @@
+from enum import Enum
 from random import random
 
-from fastapi import FastAPI, Path, HTTPException
+from fastapi import FastAPI, Path, HTTPException, Query
 
 app = FastAPI()
+
+class SortOrder(str, Enum):
+    asc = "asc"
+    desc = "desc"
 
 class UnauthHTTPException(HTTPException):
     def __init__(self) -> None:
@@ -12,3 +17,11 @@ class UnauthHTTPException(HTTPException):
 def get_post(post_id: int = Path(ge=5)): # uuid | int | str
     return {"id": post_id}
 
+@app.get("/posts")
+def get_posts(
+    limit: int = 10,
+    offset: int = Query(0, ge=0),
+    tags: list[str] = Query([]),
+    order: SortOrder = SortOrder.asc
+):
+    return {"limit": limit, "offset": offset, "tags": tags, "order": order}
