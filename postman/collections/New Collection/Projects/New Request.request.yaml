@@ -1,0 +1,11 @@
+$kind: http-request
+name: New Request
+url: http://127.0.0.1:8000/projects/1
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "name": "Cofee app"
+    }
+order: 2944429323389630

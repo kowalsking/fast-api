@@ -1,0 +1,12 @@
+$kind: http-request
+name: CreateProject
+url: http://127.0.0.1:8000/projects
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "key": "a",
+        "name": " "
+    }
+order: 1793278912424

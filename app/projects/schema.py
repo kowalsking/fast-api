@@ -5,6 +5,16 @@ from pydantic import BaseModel, field_validator, Field
 class ProjectPath(BaseModel):
     project_id: int = Field(ge=0)
 
+class ProjectUpdateRequest(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    
+class ProjectUpdateResponse(BaseModel):
+    key: str
+    id: int
+    name: str | None
+    description: str | None
+
 class ProjectCreateRequest(BaseModel):
     key: str
     name: str
