@@ -3,10 +3,13 @@ import random
 from .schema import ProjectCreateRequest, ProjectCreateResponse, ProjectGetResponse, ProjectPath, ProjectUpdateRequest, ProjectUpdateResponse
 
 router = APIRouter(
-    prefix="/projects"
+    prefix="/projects",
+    tags=["Projects"]
 )
 
-@router.get("/{project_id}", response_model=ProjectGetResponse)
+@router.get("/{project_id}", response_model=ProjectGetResponse, summary="Get project by id", description="""
+    Get project by id. This is description of router
+            """)
 def get_project(
     path: ProjectPath = Depends()
 ):
