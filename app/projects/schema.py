@@ -5,6 +5,9 @@ from pydantic import BaseModel, field_validator, Field
 class ProjectPath(BaseModel):
     project_id: int = Field(ge=0)
 
+class ProjectGetResponse(BaseModel):
+    id: int
+
 class ProjectUpdateRequest(BaseModel):
     name: str | None = None
     description: str | None = None
