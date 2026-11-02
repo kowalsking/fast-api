@@ -3,7 +3,7 @@ import random
 from .schema import ProjectCreateRequest, ProjectCreateResponse, ProjectGetResponse, ProjectPath, ProjectUpdateRequest, ProjectUpdateResponse
 
 router = APIRouter(
-    prefix="/projects",
+    prefix="/v1/projects",
     tags=["Projects"]
 )
 
