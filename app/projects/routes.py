@@ -1,22 +1,42 @@
-from .service import ProjectService
-from fastapi import FastAPI, Path, HTTPException, Query, Body, Request, APIRouter, Depends
-import random
-from .schema import ProjectCreateRequest, ProjectCreateResponse, ProjectGetResponse, ProjectPath, ProjectUpdateRequest, ProjectUpdateResponse
-
-router = APIRouter(
-    prefix="/v1/projects",
-    tags=["Projects"]
+from .service import ProjectService, ProjectServiceDeps, get_project_service
+from fastapi import (
+    FastAPI,
+    Path,
+    HTTPException,
+    Query,
+    Body,
+    Request,
+    APIRouter,
+    Depends,
 )
+import random
+from .schema import (
+    ProjectCreateRequest,
+    ProjectCreateResponse,
+    ProjectGetResponse,
+    ProjectPath,
+    ProjectUpdateRequest,
+    ProjectUpdateResponse,
+ )
 
-@router.get("/{project_id}", response_model=ProjectGetResponse, summary="Get project by id", description="""
+router = APIRouter(prefix="/v1/projects", tags=["Projects"])
+
+
+@router.get(
+    "/{project_id}",
+    response_model=ProjectGetResponse,
+    summary="Get project by id",
+    description="""
     Get project by id. This is description of router
-            """)
+            """,
+)
 def get_project(
-    path: ProjectPath = Depends()
+    service: ProjectServiceDeps,
+    path: ProjectPath = Depends(),
 ):
-    project_service = ProjectService()
-    project_service.get_project(path.project_id)
-    return ProjectGetResponse(id=path.project_id)
+    res = service.get_project(path.project_id)
+    return ProjectGetResponse(id=res)
+
 
 @router.patch("/{project_id}")
 def update_project(
@@ -25,17 +45,12 @@ def update_project(
 ):
     # return {"id": path.project_id}
     return ProjectUpdateResponse(
-        id=path.project_id,
-        key="123",
-        name=data.name,
-        description=data.description
+        id=path.project_id, key="123", name=data.name, description=data.description
     )
+
 
 @router.post("/", response_model=ProjectCreateResponse, status_code=201)
 async def create_project(data: ProjectCreateRequest):
     # return {**data.model_dump(), "id": 1}
     print(data)
-    return ProjectCreateResponse(
-        id=1,
-        name=data.name
-    )
+    return ProjectCreateResponse(id=1, name=data.name)
