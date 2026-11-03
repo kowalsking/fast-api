@@ -1,3 +1,4 @@
+from .service import ProjectService
 from fastapi import FastAPI, Path, HTTPException, Query, Body, Request, APIRouter, Depends
 import random
 from .schema import ProjectCreateRequest, ProjectCreateResponse, ProjectGetResponse, ProjectPath, ProjectUpdateRequest, ProjectUpdateResponse
@@ -13,6 +14,8 @@ router = APIRouter(
 def get_project(
     path: ProjectPath = Depends()
 ):
+    project_service = ProjectService()
+    project_service.get_project(path.project_id)
     return ProjectGetResponse(id=path.project_id)
 
 @router.patch("/{project_id}")
