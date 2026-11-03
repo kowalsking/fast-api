@@ -1,3 +1,5 @@
+from .repository import ProjectRepositoryDeps
+
 from .service import ProjectService, ProjectServiceDeps, get_project_service
 from fastapi import (
     FastAPI,

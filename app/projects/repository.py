@@ -1,7 +1,8 @@
 from typing import Annotated
+from .db import DbSessionDeps
 from fastapi import Depends
 
-def get_project_repository():
+def get_project_repository(db: DbSessionDeps):
     print('get_project_repository')
     return ProjectRepository()
 
@@ -13,5 +14,5 @@ class ProjectRepository():
 
 ProjectRepositoryDeps = Annotated[
     ProjectRepository,
-    Depends(get_project_repository)
+    Depends(get_project_repository,)
 ]
