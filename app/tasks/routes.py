@@ -1,19 +1,15 @@
+import logging
 from app.core.settings import SettingsDeps
 
 from .service import TaskServiceDeps
 from .schema import TaskGetResponse, TaskPath
 from fastapi import (
-    FastAPI,
-    Path,
-    HTTPException,
-    Query,
-    Body,
-    Request,
     APIRouter,
     Depends,
 )
 
 router = APIRouter(prefix="/v1/tasks", tags=["Tasks"])
+logger = logging.getLogger(__name__)
 
 @router.get(
     "/{task_id}",
@@ -25,10 +21,9 @@ router = APIRouter(prefix="/v1/tasks", tags=["Tasks"])
 )
 def get_task(
     service: TaskServiceDeps,
-    settings: SettingsDeps,
     path: TaskPath = Depends(),
 ):
     res = service.get(path.task_id)
-    print(settings.db.url)
-    print(settings.auth.jwt_secret)
+    logger.warning(f"ID: {res}")
+    logger.info(f"ID: {res}")
     return TaskGetResponse(id=res)
