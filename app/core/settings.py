@@ -1,11 +1,11 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class AppSetting(BaseModel):
-    app_name: str = "Board API"
+    name: str = "Board API"
     debug: bool = False
 
 class DatabaseSettings(BaseModel):
@@ -28,8 +28,8 @@ class Settings(BaseSettings):
     def db(self) -> DatabaseSettings:
         return DatabaseSettings(url=self.database_url)
     
-def get_settings() -> Settings:
-    return Settings() #type: ignore[call-arg]
+def get_settings(request: Request) -> Settings:
+    return request.app.state.settings
 
 SettingsDeps = Annotated[
     Settings,
