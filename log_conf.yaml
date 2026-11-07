@@ -14,5 +14,5 @@ handlers:
     formatter: default
 
 root:
-  level: INFO
+  level: DEBUG
   handlers: [console]
