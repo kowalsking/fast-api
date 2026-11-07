@@ -6,6 +6,7 @@ from .schema import TaskGetResponse, TaskPath
 from fastapi import (
     APIRouter,
     Depends,
+    HTTPException,
 )
 
 router = APIRouter(prefix="/v1/tasks", tags=["Tasks"])
@@ -24,5 +25,7 @@ def get_task(
     path: TaskPath = Depends(),
 ):
     res = service.get(path.task_id)
+    if not res:
+        raise HTTPException(404, "Not found")
     logger.info("ID: %s", res, extra={"user_id": 1})
     return TaskGetResponse(id=res)

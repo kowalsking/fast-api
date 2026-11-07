@@ -5,8 +5,10 @@ def get_task_repository():
     return TaskRepository()
 
 class TaskRepository():
-    def get_by_id(self, project_id: int):
-        return project_id
+    def get_by_id(self, task_id: int):
+        if task_id > 100:
+            raise ValueError("More than 100")
+        return task_id
 
 
 TaskRepositoryDeps = Annotated[
