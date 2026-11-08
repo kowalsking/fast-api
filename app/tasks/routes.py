@@ -1,4 +1,5 @@
 import logging
+from app.core.db import check_db
 from app.core.settings import SettingsDeps
 
 from .service import TaskServiceDeps
@@ -20,10 +21,12 @@ logger = logging.getLogger(__name__)
     Get task by id. This is description of router
             """,
 )
-def get_task(
+async def get_task(
     service: TaskServiceDeps,
     path: TaskPath = Depends(),
 ):
+    data = await check_db()
+    logger.info("DB check: %s", data)
     res = service.get(path.task_id)
     if not res:
         raise HTTPException(404, "Not found")
