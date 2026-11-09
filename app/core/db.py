@@ -1,6 +1,7 @@
-from typing import AsyncGenerator
+from typing import Annotated, AsyncGenerator
 
-from sqlalchemy import text
+from fastapi import Depends
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from app.core.settings import Settings
 
@@ -21,7 +22,11 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_local() as session:
         yield session
         
-async def check_db() -> int:
-    async with engine.connect() as conn:
-        result = await conn.execute(text("SELECT 1"))
-        return result.scalar_one()
+async def check_db(session: AsyncSession) -> int:
+    result = await session.execute(select(1))
+    return result.scalar_one()
+
+DBSessionDeps = Annotated[
+    AsyncSession,
+    Depends(get_session)
+]

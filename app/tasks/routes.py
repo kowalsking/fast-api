@@ -1,5 +1,5 @@
 import logging
-from app.core.db import check_db
+from app.core.db import DBSessionDeps, check_db
 from app.core.settings import SettingsDeps
 
 from .service import TaskServiceDeps
@@ -23,9 +23,10 @@ logger = logging.getLogger(__name__)
 )
 async def get_task(
     service: TaskServiceDeps,
+    db_session: DBSessionDeps,
     path: TaskPath = Depends(),
 ):
-    data = await check_db()
+    data = await check_db(db_session)
     logger.info("DB check: %s", data)
     res = service.get(path.task_id)
     if not res:
