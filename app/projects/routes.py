@@ -32,12 +32,19 @@ router = APIRouter(prefix="/v1/projects", tags=["Projects"])
     Get project by id. This is description of router
             """,
 )
-def get_project(
+async def get_project(
     service: ProjectServiceDeps,
     path: ProjectPath = Depends(),
 ):
-    res = service.get(path.project_id)
-    return ProjectGetResponse(id=res)
+    project = await service.get(path.project_id)
+    if project is None:
+        raise HTTPException(404, "Project not found")
+    return ProjectGetResponse(
+        id=project.id,
+        key=project.key,
+        name=project.name,
+        description=project.description
+    )
 
 
 @router.patch("/{project_id}")

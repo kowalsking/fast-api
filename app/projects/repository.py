@@ -11,8 +11,8 @@ class ProjectRepository():
     def __init__(self, session: DBSessionDeps):
         self.session = session
         
-    def get_by_id(self, project_id: int):
-        return project_id
+    async def get_by_id(self, project_id: int):
+        return await self.session.get(Project, project_id)
     
     async def create(self, project: Project):
         self.session.add(project)
