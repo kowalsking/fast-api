@@ -14,16 +14,11 @@ class ProjectRepository():
     def get_by_id(self, project_id: int):
         return project_id
     
-    async def create(self):
-        project = Project(
-            key="wz",
-            name="Wazar",
-            description="Ecommerce OS"
-        )
+    async def create(self, project: Project):
         self.session.add(project)
         await self.session.commit()
         await self.session.refresh(project)
-        logger.info(project)
+        return project
 
 
 def get_project_repository(session: DBSessionDeps):
