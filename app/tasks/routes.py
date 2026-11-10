@@ -24,11 +24,8 @@ async def get_task(
     service: TaskServiceDeps,
     path: TaskPath = Depends(),
 ):
-    res = service.get(path.task_id)
-    if not res:
-        raise HTTPException(404, "Not found")
-    logger.info("ID: %s", res, extra={"user_id": 1})
-    return TaskGetResponse(id=res)
+    res = await service.get(path.task_id)
+    return TaskGetResponse(id=res.id, title=res.title, description=res.description, is_completed=res.is_completed, project_id=res.project_id)
 
 
 @router.post("/", response_model=TaskCreateResponse, status_code=201)
