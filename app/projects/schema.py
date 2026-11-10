@@ -14,12 +14,13 @@ class ProjectGetResponse(BaseModel):
 
 
 class ProjectUpdateRequest(BaseModel):
+    key: str | None = None
     name: str | None = None
     description: str | None = None
 
 
 class ProjectUpdateResponse(BaseModel):
-    key: str
+    key: str | None
     id: int
     name: str | None
     description: str | None

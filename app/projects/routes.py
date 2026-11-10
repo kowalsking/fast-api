@@ -48,13 +48,16 @@ async def get_project(
 
 
 @router.patch("/{project_id}")
-def update_project(
+async def update_project(
     data: ProjectUpdateRequest,
+    service: ProjectServiceDeps,
     path: ProjectPath = Depends(),
 ):
-    # return {"id": path.project_id}
+    project = await service.update(path.project_id, data)
+    if project is None:
+        raise HTTPException(404, "Project not found")
     return ProjectUpdateResponse(
-        id=path.project_id, key="123", name=data.name, description=data.description
+        id=project.id, key=project.key, name=project.name, description=project.description
     )
 
 
