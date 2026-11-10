@@ -24,7 +24,7 @@ class ProjectService:
         return await self.repo.save(project)
     
     async def update(self, project_id, data: ProjectUpdateRequest):
-        project = await self.repo.save(project_id)
+        project = await self.repo.get_by_id(project_id)
         
         if project is None:
             return None
@@ -33,7 +33,14 @@ class ProjectService:
         for field, value in patch.items():
             setattr(project, field, value)
         return await self.repo.save(project)
-
+    
+    async def delete(self, project_id: int):
+        project = await self.repo.get_by_id(project_id)
+        
+        if project is None:
+            return False
+        await self.repo.delete(project)
+        return True
 
 ProjectServiceDeps = Annotated[
     ProjectService,
