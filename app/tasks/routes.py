@@ -2,7 +2,7 @@ import logging
 from app.core.settings import SettingsDeps
 
 from .service import TaskServiceDeps
-from .schema import TaskGetResponse, TaskPath
+from .schema import TaskCreateRequest, TaskCreateResponse, TaskGetResponse, TaskPath
 from fastapi import (
     APIRouter,
     Depends,
@@ -29,3 +29,9 @@ async def get_task(
         raise HTTPException(404, "Not found")
     logger.info("ID: %s", res, extra={"user_id": 1})
     return TaskGetResponse(id=res)
+
+
+@router.post("/", response_model=TaskCreateResponse, status_code=201)
+async def create_tasks(service: TaskServiceDeps, data: TaskCreateRequest):
+    res = await service.create(data)
+    return TaskCreateResponse(id=res.id, title=res.title, description=res.description, is_completed=res.is_completed, project_id=res.project_id)
