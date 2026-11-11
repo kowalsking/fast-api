@@ -19,7 +19,7 @@ from .schema import (
     ProjectPath,
     ProjectUpdateRequest,
     ProjectUpdateResponse,
- )
+)
 
 router = APIRouter(prefix="/v1/projects", tags=["Projects"])
 
@@ -43,9 +43,10 @@ async def get_project(
         id=project.id,
         key=project.key,
         name=project.name,
-        description=project.description
+        description=project.description,
     )
-    
+
+
 @router.delete(
     "/{project_id}",
     description="""
@@ -59,7 +60,6 @@ async def delete_project(
     success = await service.delete(path.project_id)
     if not success:
         raise HTTPException(404, "Project not found")
-    
 
 
 @router.patch("/{project_id}")
@@ -72,7 +72,10 @@ async def update_project(
     if project is None:
         raise HTTPException(404, "Project not found")
     return ProjectUpdateResponse(
-        id=project.id, key=project.key, name=project.name, description=project.description
+        id=project.id,
+        key=project.key,
+        name=project.name,
+        description=project.description,
     )
 
 

@@ -12,6 +12,7 @@ from fastapi import (
 router = APIRouter(prefix="/v1/tasks", tags=["Tasks"])
 logger = logging.getLogger(__name__)
 
+
 @router.get(
     "/{task_id}",
     response_model=TaskGetResponse,
@@ -25,10 +26,22 @@ async def get_task(
     path: TaskPath = Depends(),
 ):
     res = await service.get(path.task_id)
-    return TaskGetResponse(id=res.id, title=res.title, description=res.description, is_completed=res.is_completed, project_id=res.project_id)
+    return TaskGetResponse(
+        id=res.id,
+        title=res.title,
+        description=res.description,
+        is_completed=res.is_completed,
+        project_id=res.project_id,
+    )
 
 
 @router.post("/", response_model=TaskCreateResponse, status_code=201)
 async def create_tasks(service: TaskServiceDeps, data: TaskCreateRequest):
     res = await service.create(data)
-    return TaskCreateResponse(id=res.id, title=res.title, description=res.description, is_completed=res.is_completed, project_id=res.project_id)
+    return TaskCreateResponse(
+        id=res.id,
+        title=res.title,
+        description=res.description,
+        is_completed=res.is_completed,
+        project_id=res.project_id,
+    )

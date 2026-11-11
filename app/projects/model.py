@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING
 
 from sqlalchemy import String, Text
@@ -13,17 +12,21 @@ class Project(Base):
     __tablename__ = "projects"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    key: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    key: Mapped[str] = mapped_column(
+        String(64), unique=True, nullable=False, index=True
+    )
     name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     tasks: Mapped[list["Task"]] = relationship(
         "Task",
         back_populates="project",
         cascade="all, delete-orphan",
-        passive_deletes=True
+        passive_deletes=True,
     )
-    
-    def __init__(self, key: str, name: str | None = None, description: str | None = None):
+
+    def __init__(
+        self, key: str, name: str | None = None, description: str | None = None
+    ):
         self.key = key
         self.name = name
         self.description = description

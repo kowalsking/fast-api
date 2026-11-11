@@ -8,8 +8,12 @@ from fastapi import Depends, HTTPException
 
 logger = logging.getLogger(__name__)
 
-def get_task_service(task_repo: TaskRepositoryDeps, project_repo: ProjectRepositoryDeps):
+
+def get_task_service(
+    task_repo: TaskRepositoryDeps, project_repo: ProjectRepositoryDeps
+):
     return TaskService(task_repo, project_repo)
+
 
 class TaskService:
     def __init__(self, task_repo: TaskRepository, project_repo: ProjectRepositoryDeps):
@@ -21,16 +25,13 @@ class TaskService:
         if task is None:
             raise HTTPException(404, "Project not found!")
         return task
-            
+
     async def create(self, data: TaskCreateRequest):
         project = await self.project_repo.get_by_id(data.project_id)
         if project is None:
             raise HTTPException(404, "Project not found!")
-        task = Task(**data.model_dump(), is_completed = False)
+        task = Task(**data.model_dump(), is_completed=False)
         return await self.task_repo.save(task)
-            
 
-TaskServiceDeps = Annotated[
-    TaskService,
-    Depends(get_task_service)
-]
+
+TaskServiceDeps = Annotated[TaskService, Depends(get_task_service)]
