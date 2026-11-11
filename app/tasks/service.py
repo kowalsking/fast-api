@@ -2,7 +2,7 @@ import logging
 from typing import Annotated
 from app.tasks.model import Task
 from app.projects.repository import ProjectRepositoryDeps
-from app.tasks.schema import TaskCreateRequest
+from app.tasks.schema import TaskCreateRequest, TaskSearchParams
 from .repository import TaskRepository, TaskRepositoryDeps
 from fastapi import Depends, HTTPException
 
@@ -32,6 +32,12 @@ class TaskService:
             raise HTTPException(404, "Project not found!")
         task = Task(**data.model_dump(), is_completed=False)
         return await self.task_repo.save(task)
+    
+    async def search(self, params: TaskSearchParams) -> tuple[list[Task], int]:
+        return await self.task_repo.search(
+            offset=params.offset,
+            limit=params.limit
+        )
 
 
 TaskServiceDeps = Annotated[TaskService, Depends(get_task_service)]

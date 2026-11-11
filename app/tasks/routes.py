@@ -2,7 +2,7 @@ import logging
 from app.core.settings import SettingsDeps
 
 from .service import TaskServiceDeps
-from .schema import TaskCreateRequest, TaskCreateResponse, TaskGetResponse, TaskPath
+from .schema import TaskCreateRequest, TaskCreateResponse, TaskGetResponse, TaskPath, TaskSearchParams, TaskSearchResponse
 from fastapi import (
     APIRouter,
     Depends,
@@ -32,6 +32,35 @@ async def get_task(
         description=res.description,
         is_completed=res.is_completed,
         project_id=res.project_id,
+    )
+    
+@router.get(
+    "/",
+    response_model=TaskSearchResponse,
+    description="""
+    Task Search
+            """,
+)
+async def search_task(
+    service: TaskServiceDeps,
+    params: TaskSearchParams = Depends(),
+):
+    tasks, total = await service.search(params)
+
+    return TaskSearchResponse(
+        items=[
+            TaskGetResponse(
+                id=t.id,
+                title=t.title,
+                description=t.description,
+                is_completed=t.is_completed,
+                project_id=t.project_id
+            )
+            for t in tasks
+        ],
+        total=total,
+        limit=params.limit,
+        offset=params.offset
     )
 
 
