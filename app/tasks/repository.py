@@ -1,5 +1,7 @@
 from typing import Annotated
 from fastapi import Depends
+from sqlalchemy import select
+from sqlalchemy.sql.functions import count
 
 from app.core.db import DBSessionDeps
 from app.tasks.model import Task
@@ -21,6 +23,21 @@ class TaskRepository:
         await self.session.commit()
         await self.session.refresh(task)
         return task
+    
+    async def search(self, offset: int = 0, limit: int = 20):
+        count_query = select(count()).select_from(Task)
+        total_result = await self.session.execute(count_query)
+        total = total_result.scalar_one()
+        
+        query = (
+            select(Task)
+            .order_by(Task.id)
+            .offset(offset)
+            .limit(limit)
+        )
+        result = await self.session.execute(query)
+        tasks = list(result.scalars().all())
+        return tasks, total
 
 
 TaskRepositoryDeps = Annotated[
