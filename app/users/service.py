@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException
 
 from app.tasks.model import Task
+from app.users.jwt import create_access_token
 from app.users.model import User
 from app.users.repository import UserRepositoryDeps
 from app.users.schema import UserRegisterRequest, UserLoginRequest
@@ -27,16 +28,19 @@ class UserService:
             raise HTTPException(400, "User already exist!")
         hashed = hash_password(data.password)
         user = User(email=data.email, hashed_password=hashed)
-        return await self.user_repo.save(user)
+        saved_user = await self.user_repo.save(user)
+        token = create_access_token(saved_user.id)
+        return token
+        
     
     async def authenticate(self, data: UserLoginRequest):
         user = await self.user_repo.get_by_email(data.email)
         if user is None:
-            return False
+            return None
         if not verify_password(data.password, user.hashed_password):
-            return  False
+            return None
         
-        return True
+        return create_access_token(user.id)
 
 
 
