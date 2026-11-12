@@ -31,6 +31,7 @@ class TaskCreateResponse(BaseModel):
 class TaskSearchParams(BaseModel):
     offset: int = Field(0, ge=0)
     limit: int = Field(20, ge=1, le=100)
+    project_id: int | None = Field(None, gt=0)
     
 class TaskSearchResponse(BaseModel):
     items: list[TaskGetResponse]
