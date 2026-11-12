@@ -21,6 +21,9 @@ def get_user_service(
 class UserService:
     def __init__(self, user_repo: UserRepositoryDeps):
         self.user_repo = user_repo
+        
+    async def get(self, user_id: int):
+        return await self.user_repo.get_by_id(user_id)
 
     async def create(self, data: UserRegisterRequest):
         user = await self.user_repo.get_by_email(data.email)

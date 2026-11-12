@@ -12,6 +12,9 @@ def get_user_repository(session: DBSessionDeps):
 class UserRepository:
     def __init__(self, session: DBSessionDeps):
         self.session = session
+        
+    async def get_by_id(self, user_id: int):
+        return await self.session.get(User, user_id)
 
     async def get_by_email(self, email: str) -> User | None:
         result = await self.session.execute(
