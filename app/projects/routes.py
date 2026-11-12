@@ -1,3 +1,7 @@
+import logging
+
+from app.users.current_user import CurrentUserDeps
+
 from .repository import ProjectRepositoryDeps
 
 from .service import ProjectService, ProjectServiceDeps, get_project_service
@@ -21,6 +25,7 @@ from .schema import (
     ProjectUpdateResponse,
 )
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/v1/projects", tags=["Projects"])
 
 
@@ -34,8 +39,10 @@ router = APIRouter(prefix="/v1/projects", tags=["Projects"])
 )
 async def get_project(
     service: ProjectServiceDeps,
+    current_user: CurrentUserDeps,
     path: ProjectPath = Depends(),
 ):
+    logger.info(current_user)
     project = await service.get(path.project_id)
     if project is None:
         raise HTTPException(404, "Project not found")
