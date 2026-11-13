@@ -1,10 +1,13 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Text, Boolean, ForeignKey
+from sqlalchemy import String, Text, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
+
+if TYPE_CHECKING:
+    from app.projects.model import ProjectMember
 
 class User(Base):
     __tablename__ = "users"
@@ -13,6 +16,10 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    
+    project_members: Mapped[list["ProjectMember"]] = relationship(
+        "ProjectMember", back_populates="user"
+    )
 
     def __init__(
         self,
