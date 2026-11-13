@@ -42,8 +42,7 @@ async def get_project(
     current_user: CurrentUserDeps,
     path: ProjectPath = Depends(),
 ):
-    logger.info(current_user)
-    project = await service.get(path.project_id)
+    project = await service.get(path.project_id, current_user.id)
     if project is None:
         raise HTTPException(404, "Project not found")
     return ProjectGetResponse(
@@ -73,9 +72,10 @@ async def delete_project(
 async def update_project(
     data: ProjectUpdateRequest,
     service: ProjectServiceDeps,
+    current_user: CurrentUserDeps,
     path: ProjectPath = Depends(),
 ):
-    project = await service.update(path.project_id, data)
+    project = await service.update(path.project_id, data, current_user.id)
     if project is None:
         raise HTTPException(404, "Project not found")
     return ProjectUpdateResponse(
@@ -87,6 +87,6 @@ async def update_project(
 
 
 @router.post("/", response_model=ProjectCreateResponse, status_code=201)
-async def create_project(service: ProjectServiceDeps, data: ProjectCreateRequest):
-    res = await service.create(data)
+async def create_project(service: ProjectServiceDeps, data: ProjectCreateRequest, current_user: CurrentUserDeps):
+    res = await service.create(data, current_user.id)
     return ProjectCreateResponse(id=res.id, name=res.name)

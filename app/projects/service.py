@@ -2,6 +2,7 @@ from typing import Annotated
 
 from app.projects.model import Project
 from app.projects.schema import ProjectCreateRequest, ProjectUpdateRequest
+from app.users.model import User
 from .repository import ProjectRepository, ProjectRepositoryDeps
 from fastapi import Depends
 
@@ -14,14 +15,20 @@ class ProjectService:
     def __init__(self, repo: ProjectRepository):
         self.repo = repo
 
-    async def get(self, project_id: int):
-        return await self.repo.get_by_id(project_id)
+    async def get(self, project_id: int, user_id: int):
+        project = await self.repo.get_by_id(project_id)
+        if project is None:
+            return None
+        member = await self.repo.get_member(project_id, user_id)
+        if member is None:
+            return None
+        return project
 
-    async def create(self, data: ProjectCreateRequest):
+    async def create(self, data: ProjectCreateRequest, user_id: int):
         project = Project(key=data.key, name=data.name, description=data.description)
-        return await self.repo.save(project)
+        return await self.repo.save(project, user_id)
 
-    async def update(self, project_id, data: ProjectUpdateRequest):
+    async def update(self, project_id, data: ProjectUpdateRequest, user_id: int):
         project = await self.repo.get_by_id(project_id)
 
         if project is None:
@@ -30,7 +37,7 @@ class ProjectService:
         patch = data.model_dump(exclude_unset=True)
         for field, value in patch.items():
             setattr(project, field, value)
-        return await self.repo.save(project)
+        return await self.repo.save(project, user_id)
 
     async def delete(self, project_id: int):
         project = await self.repo.get_by_id(project_id)
